@@ -112,21 +112,6 @@
             }
         }
 
-        .header p {
-            color: var(--text-secondary);
-            font-size: 1.125rem;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
         .theme-toggle-btn {
             display: inline-flex;
             align-items: center;
@@ -224,87 +209,6 @@
             border-radius: 4px;
             font-size: 0.875rem;
             font-weight: 600;
-        }
-
-        .history-sidebar {
-            position: fixed;
-            left: -400px;
-            top: 0;
-            width: 400px;
-            height: 100vh;
-            background: var(--surface-color);
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            transition: left 0.3s ease;
-            overflow-y: auto;
-            padding: 2rem;
-        }
-
-        .history-sidebar.show {
-            left: 0;
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .history-header h3 {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-
-        .history-item {
-            background: var(--background-color);
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-
-        .history-item:hover {
-            border-color: var(--primary-color);
-            transform: translateX(5px);
-        }
-
-        .history-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .history-item-time {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .history-item-preview {
-            font-family: monospace;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .history-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-
-        .history-overlay.show {
-            display: block;
         }
 
         .main-content {
@@ -704,16 +608,14 @@
         /* Custom Scrollbar - Đẹp hơn */
         textarea::-webkit-scrollbar,
         pre.output::-webkit-scrollbar,
-        .json-tree::-webkit-scrollbar,
-        .history-sidebar::-webkit-scrollbar {
+        .json-tree::-webkit-scrollbar {
             width: 12px;
             height: 12px;
         }
 
         textarea::-webkit-scrollbar-track,
         pre.output::-webkit-scrollbar-track,
-        .json-tree::-webkit-scrollbar-track,
-        .history-sidebar::-webkit-scrollbar-track {
+        .json-tree::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.05);
             border-radius: 10px;
             margin: 4px;
@@ -721,8 +623,7 @@
 
         textarea::-webkit-scrollbar-thumb,
         pre.output::-webkit-scrollbar-thumb,
-        .json-tree::-webkit-scrollbar-thumb,
-        .history-sidebar::-webkit-scrollbar-thumb {
+        .json-tree::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
             border-radius: 10px;
             border: 2px solid var(--surface-color);
@@ -730,8 +631,7 @@
 
         textarea::-webkit-scrollbar-thumb:hover,
         pre.output::-webkit-scrollbar-thumb:hover,
-        .json-tree::-webkit-scrollbar-thumb:hover,
-        .history-sidebar::-webkit-scrollbar-thumb:hover {
+        .json-tree::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, var(--primary-hover), var(--primary-color));
         }
 
@@ -905,11 +805,6 @@
             font-weight: 600;
         }
 
-        /* Remove footer-links nếu không cần */
-        .footer-links {
-            display: none;
-        }
-
         @media (max-width: 768px) {
             .header {
                 padding: 0.75rem 1rem;
@@ -943,22 +838,6 @@
     </style>
 </head>
 <body>
-<div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
-
-<div class="history-sidebar" id="historySidebar">
-    <div class="history-header">
-        <h3><i class="fas fa-history"></i> Lịch sử</h3>
-        <div class="btn-group">
-            <button class="btn btn-secondary btn-icon" onclick="clearHistory()" title="Xóa tất cả">
-                <i class="fas fa-trash"></i>
-            </button>
-            <button class="btn btn-secondary btn-icon" onclick="toggleHistory()" title="Đóng">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-    <div id="historyList"></div>
-</div>
 
 <div class="shortcuts-info" id="shortcutsInfo">
     <h3><i class="fas fa-keyboard"></i> Phím tắt</h3>
@@ -977,10 +856,6 @@
     <div class="shortcut-item">
         <span>Chế độ tối</span>
         <span class="shortcut-key">Ctrl + /</span>
-    </div>
-    <div class="shortcut-item">
-        <span>Lịch sử</span>
-        <span class="shortcut-key">Ctrl + H</span>
     </div>
     <button class="btn btn-primary" onclick="toggleShortcuts()" style="margin-top: 1rem; width: 100%;">
         <i class="fas fa-times"></i> Đóng
@@ -1006,10 +881,6 @@
             <button class="theme-toggle-btn" onclick="toggleTheme()">
                 <i class="fas fa-moon" id="theme-icon"></i>
                 <span id="theme-text">Dark Mode</span>
-            </button>
-            <button class="btn btn-secondary" onclick="toggleHistory()">
-                <i class="fas fa-history"></i>
-                Lịch sử
             </button>
             <button class="btn btn-secondary" onclick="toggleShortcuts()">
                 <i class="fas fa-keyboard"></i>
@@ -1098,6 +969,7 @@
             </div>
         </div>
     </main>
+
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-team">
@@ -1145,11 +1017,9 @@
     let isJsonMode = true;
     let currentViewMode = 'formatted';
     let currentParsedJSON = null;
-    const MAX_HISTORY = 10;
 
     document.addEventListener('DOMContentLoaded', () => {
         initializeTheme();
-        loadHistory();
         setupKeyboardShortcuts();
 
         const jsonInput = document.getElementById('jsonInput');
@@ -1292,11 +1162,6 @@
                 e.preventDefault();
                 toggleTheme();
             }
-
-            if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
-                e.preventDefault();
-                toggleHistory();
-            }
         });
     }
 
@@ -1390,7 +1255,6 @@
                         renderTreeView(parsedJson);
                     }
 
-                    saveToHistory(formattedJson);
                     fixStatus.classList.remove('show');
                     errorAlert.classList.remove('show');
                 } catch (parseError) {
@@ -1408,8 +1272,6 @@
                             if (currentViewMode === 'tree') {
                                 renderTreeView(parsedJson);
                             }
-
-                            saveToHistory(formattedJson);
 
                             fixStatus.classList.add('show');
                             document.getElementById('fixStatusText').textContent =
@@ -1436,7 +1298,6 @@
                 jsonOutput.textContent = jsonString;
                 Prism.highlightElement(jsonOutput);
 
-                saveToHistory(jsonString);
                 fixStatus.classList.remove('show');
             }
             errorAlert.classList.remove('show');
@@ -1470,7 +1331,6 @@
             Prism.highlightElement(jsonOutput);
 
             showAlert('success', 'Đã minify JSON!');
-            saveToHistory(minified);
         } catch (err) {
             showAlert('error', `Lỗi: ${err.message}`);
         }
@@ -1662,105 +1522,6 @@
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
-    }
-
-    function saveToHistory(json) {
-        try {
-            let history = JSON.parse(localStorage.getItem('jsonHistory') || '[]');
-
-            const entry = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                data: json.substring(0, 2000),
-                preview: json.substring(0, 100) + (json.length > 100 ? '...' : '')
-            };
-
-            history.unshift(entry);
-
-            if (history.length > MAX_HISTORY) {
-                history = history.slice(0, MAX_HISTORY);
-            }
-
-            localStorage.setItem('jsonHistory', JSON.stringify(history));
-            loadHistory();
-        } catch (err) {
-            console.error('Save history error:', err);
-        }
-    }
-
-    function loadHistory() {
-        try {
-            const history = JSON.parse(localStorage.getItem('jsonHistory') || '[]');
-            const historyList = document.getElementById('historyList');
-
-            if (history.length === 0) {
-                historyList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Chưa có lịch sử</p>';
-                return;
-            }
-
-            historyList.innerHTML = history.map(entry => {
-                const date = new Date(entry.timestamp);
-                const timeStr = date.toLocaleString('vi-VN');
-
-                return `
-                        <div class="history-item" onclick="loadFromHistory(${entry.id})">
-                            <div class="history-item-header">
-                                <span class="history-item-time">${timeStr}</span>
-                                <button class="btn btn-secondary btn-icon" onclick="event.stopPropagation(); deleteHistoryItem(${entry.id})" title="Xóa">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                            <div class="history-item-preview">${escapeHtml(entry.preview)}</div>
-                        </div>
-                    `;
-            }).join('');
-        } catch (err) {
-            console.error('Load history error:', err);
-        }
-    }
-
-    function loadFromHistory(id) {
-        try {
-            const history = JSON.parse(localStorage.getItem('jsonHistory') || '[]');
-            const entry = history.find(e => e.id === id);
-
-            if (entry) {
-                document.getElementById('jsonInput').value = entry.data;
-                convertFormat();
-                toggleHistory();
-                showAlert('success', 'Đã tải từ lịch sử!');
-            }
-        } catch (err) {
-            showAlert('error', 'Không thể tải!');
-        }
-    }
-
-    function deleteHistoryItem(id) {
-        try {
-            let history = JSON.parse(localStorage.getItem('jsonHistory') || '[]');
-            history = history.filter(e => e.id !== id);
-            localStorage.setItem('jsonHistory', JSON.stringify(history));
-            loadHistory();
-            showAlert('success', 'Đã xóa!');
-        } catch (err) {
-            showAlert('error', 'Không thể xóa!');
-        }
-    }
-
-    function clearHistory() {
-        if (confirm('Xóa toàn bộ lịch sử (10 items)?')) {
-            localStorage.removeItem('jsonHistory');
-            loadHistory();
-            showAlert('success', 'Đã xóa toàn bộ!');
-        }
-    }
-
-    function toggleHistory() {
-        const sidebar = document.getElementById('historySidebar');
-        const overlay = document.getElementById('historyOverlay');
-
-        sidebar.classList.toggle('show');
-        overlay.classList.toggle('show');
     }
 
     function toggleShortcuts() {
