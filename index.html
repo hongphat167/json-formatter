@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter Pro - Ultimate</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism.min.css"
+          id="prism-light">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism-okaidia.min.css"
+          id="prism-dark" disabled>
+    <style>
+        :root {
+            --primary-color: #0070F3;
+            --primary-hover: #005BB5;
+            --secondary-color: #17C964;
+            --background-color: #F4F7FA;
+            --surface-color: #FFFFFF;
+            --error-color: #FF3B30;
+            --success-color: #34C759;
+            --warning-color: #FF9500;
+            --text-primary: #0A0A0A;
+            --text-secondary: #6E6E73;
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(to bottom right, var(--background-color), #E0E7FF);
+            line-height: 1.6;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header - Compact Version */
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.03em;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin: 0 0.15rem 0.25rem;
+        }
+
+        .header .badge.auto-fix {
+            background: linear-gradient(to right, var(--warning-color), var(--error-color));
+            animation: pulse 2s infinite;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .theme-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: white;
+            letter-spacing: 0.025em;
+            background: linear-gradient(to right, #8E8E93, #AEAEB2);
+            box-shadow: 0 2px 4px rgba(142, 142, 147, 0.2);
+        }
+
+        .theme-toggle-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(142, 142, 147, 0.3);
+        }
+
+        .auto-fix-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--background-color);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+        }
+
+        .auto-fix-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .auto-fix-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .shortcuts-info {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            display: none;
+            max-width: 400px;
+        }
+
+        .shortcuts-info.show {
+            display: block;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .shortcuts-info h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: var(--background-color);
+        }
+
+        .shortcut-key {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .history-sidebar {
+            position: fixed;
+            left: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: var(--surface-color);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .history-sidebar.show {
+            left: 0;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .history-header h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .history-item {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-item-time {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .history-item-preview {
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .history-overlay.show {
+            display: block;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 2rem;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .panel-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .panel {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--transition);
+            height: 100%;
+        }
+
+        .panel:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .panel-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            background: #FAFAFA;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .panel-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.125rem;
+        }
+
+        .panel-title i {
+            color: var(--primary-color);
+        }
+
+        /* FIX: Panel content với scroll đúng cách */
+        .panel-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .fix-status {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--warning-color);
+            color: white;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            animation: slideDown 0.3s ease;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .fix-status.show {
+            display: flex;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .view-mode-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--background-color);
+            padding: 0.25rem;
+            border-radius: 10px;
+        }
+
+        .view-mode-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .view-mode-btn.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 160px;
+            height: 40px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            transition: var(--transition);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 32px;
+            width: 32px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-text {
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            user-select: none;
+        }
+
+        .toggle-text.left {
+            margin-right: 28px;
+        }
+
+        .toggle-text.right {
+            margin-left: 28px;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(120px);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: white;
+            letter-spacing: 0.025em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 4px rgba(0, 112, 243, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 112, 243, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(to right, #8E8E93, #AEAEB2);
+            box-shadow: 0 2px 4px rgba(142, 142, 147, 0.2);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(142, 142, 147, 0.3);
+        }
+
+        .btn-icon {
+            padding: 0.75rem;
+            min-width: 44px;
+            justify-content: center;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* FIX: Textarea với word wrap tốt hơn */
+        textarea {
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            border: none;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--surface-color);
+            resize: none;
+            outline: none;
+
+            /* CRITICAL: Word wrap settings */
+            overflow-y: auto;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        /* FIX: Pre output với word wrap */
+        pre.output {
+            margin: 0;
+            padding: 1rem;
+            height: 100%;
+            background: var(--surface-color);
+
+            /* CRITICAL: Scroll và wrap settings */
+            overflow-y: auto;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        pre.output code {
+            background: none;
+            padding: 0;
+            display: block;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+
+            /* CRITICAL: Word wrap cho code */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        /* FIX: JSON Tree với word wrap */
+        .json-tree {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            padding: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            height: 100%;
+
+            /* CRITICAL: Scroll và wrap */
+            overflow-y: auto;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .tree-node {
+            margin-left: 1.5rem;
+        }
+
+        .tree-key {
+            color: #881391;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .tree-value {
+            color: #1c00cf;
+            word-break: break-all;
+        }
+
+        .tree-string {
+            color: #c41a16;
+            word-break: break-all;
+        }
+
+        .tree-number {
+            color: #1c00cf;
+        }
+
+        .tree-boolean {
+            color: #0d22aa;
+        }
+
+        .tree-null {
+            color: #808080;
+        }
+
+        .tree-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 20px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tree-toggle:hover {
+            color: var(--primary-hover);
+        }
+
+        .tree-collapsed {
+            display: none;
+        }
+
+        .tree-line {
+            padding: 0.25rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .tree-line:hover {
+            background: rgba(0, 112, 243, 0.05);
+        }
+
+        [data-theme="dark"] .tree-key {
+            color: #9cdcfe;
+        }
+
+        [data-theme="dark"] .tree-value {
+            color: #ce9178;
+        }
+
+        [data-theme="dark"] .tree-string {
+            color: #ce9178;
+        }
+
+        [data-theme="dark"] .tree-number {
+            color: #b5cea8;
+        }
+
+        [data-theme="dark"] .tree-boolean {
+            color: #569cd6;
+        }
+
+        [data-theme="dark"] .tree-null {
+            color: #808080;
+        }
+
+        /* Custom Scrollbar - Đẹp hơn */
+        textarea::-webkit-scrollbar,
+        pre.output::-webkit-scrollbar,
+        .json-tree::-webkit-scrollbar,
+        .history-sidebar::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        textarea::-webkit-scrollbar-track,
+        pre.output::-webkit-scrollbar-track,
+        .json-tree::-webkit-scrollbar-track,
+        .history-sidebar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            margin: 4px;
+        }
+
+        textarea::-webkit-scrollbar-thumb,
+        pre.output::-webkit-scrollbar-thumb,
+        .json-tree::-webkit-scrollbar-thumb,
+        .history-sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            border: 2px solid var(--surface-color);
+        }
+
+        textarea::-webkit-scrollbar-thumb:hover,
+        pre.output::-webkit-scrollbar-thumb:hover,
+        .json-tree::-webkit-scrollbar-thumb:hover,
+        .history-sidebar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--primary-hover), var(--primary-color));
+        }
+
+        /* Scrollbar corner */
+        textarea::-webkit-scrollbar-corner,
+        pre.output::-webkit-scrollbar-corner,
+        .json-tree::-webkit-scrollbar-corner {
+            background: var(--surface-color);
+        }
+
+        textarea:focus {
+            background: #F9FAFB;
+        }
+
+        .alert {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: none;
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            align-items: center;
+            gap: 0.75rem;
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-error {
+            background: rgba(255, 59, 48, 0.95);
+            color: white;
+        }
+
+        .alert-success {
+            background: rgba(52, 199, 89, 0.95);
+            color: white;
+        }
+
+        .alert-info {
+            background: rgba(0, 112, 243, 0.95);
+            color: white;
+        }
+
+        .alert-warning {
+            background: rgba(255, 149, 0, 0.95);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        [data-theme="dark"] {
+            --background-color: #0A0A0A;
+            --surface-color: #1C1C1E;
+            --text-primary: #F2F2F7;
+            --text-secondary: #AEAEB2;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(to bottom right, #0A0A0A, #1C1C1E);
+        }
+
+        [data-theme="dark"] .panel-header {
+            background: #0A0A0A;
+            border-color: #2C2C2E;
+        }
+
+        [data-theme="dark"] textarea,
+        [data-theme="dark"] pre.output {
+            background: #0A0A0A;
+            color: #F2F2F7;
+        }
+
+        [data-theme="dark"] textarea:focus {
+            background: #1C1C1E;
+        }
+
+        [data-theme="dark"] .view-mode-toggle {
+            background: #0A0A0A;
+        }
+
+        [data-theme="dark"] .view-mode-btn.active {
+            background: #2C2C2E;
+        }
+
+        [data-theme="dark"] textarea::-webkit-scrollbar-track,
+        [data-theme="dark"] pre.output::-webkit-scrollbar-track,
+        [data-theme="dark"] .json-tree::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="dark"] textarea::-webkit-scrollbar-thumb,
+        [data-theme="dark"] pre.output::-webkit-scrollbar-thumb,
+        [data-theme="dark"] .json-tree::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            border-color: #1C1C1E;
+        }
+
+        /* Footer - Compact Version */
+        .footer {
+            margin-top: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-team {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .footer-team i {
+            color: var(--primary-color);
+            font-size: 0.95rem;
+        }
+
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .footer-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--text-secondary);
+            opacity: 0.2;
+        }
+
+        .footer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Remove footer-links nếu không cần */
+        .footer-links {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.75rem 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.8rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .footer {
+                padding: 0.75rem 1rem;
+                margin-top: 1rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .footer-divider {
+                width: 50%;
+                height: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+
+<div class="history-sidebar" id="historySidebar">
+    <div class="history-header">
+        <h3><i class="fas fa-history"></i> Lịch sử</h3>
+        <div class="btn-group">
+            <button class="btn btn-secondary btn-icon" onclick="clearHistory()" title="Xóa tất cả">
+                <i class="fas fa-trash"></i>
+            </button>
+            <button class="btn btn-secondary btn-icon" onclick="toggleHistory()" title="Đóng">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div id="historyList"></div>
+</div>
+
+<div class="shortcuts-info" id="shortcutsInfo">
+    <h3><i class="fas fa-keyboard"></i> Phím tắt</h3>
+    <div class="shortcut-item">
+        <span>Format JSON</span>
+        <span class="shortcut-key">Ctrl + Enter</span>
+    </div>
+    <div class="shortcut-item">
+        <span>Xóa tất cả</span>
+        <span class="shortcut-key">Ctrl + K</span>
+    </div>
+    <div class="shortcut-item">
+        <span>Tải xuống</span>
+        <span class="shortcut-key">Ctrl + S</span>
+    </div>
+    <div class="shortcut-item">
+        <span>Chế độ tối</span>
+        <span class="shortcut-key">Ctrl + /</span>
+    </div>
+    <div class="shortcut-item">
+        <span>Lịch sử</span>
+        <span class="shortcut-key">Ctrl + H</span>
+    </div>
+    <button class="btn btn-primary" onclick="toggleShortcuts()" style="margin-top: 1rem; width: 100%;">
+        <i class="fas fa-times"></i> Đóng
+    </button>
+</div>
+
+<div class="container">
+    <header class="header">
+        <div>
+            <span class="badge">PRO VERSION</span>
+            <span class="badge auto-fix">🔧 ULTIMATE AUTO-FIX</span>
+        </div>
+        <h1>JSON Formatter</h1>
+        <p>Công cụ định dạng JSON với khả năng tự động sửa lỗi</p>
+        <div class="header-actions">
+            <div class="auto-fix-toggle">
+                <label>
+                    <input type="checkbox" id="autoFixToggle" checked>
+                    <i class="fas fa-magic"></i>
+                    <span>Tự động sửa lỗi</span>
+                </label>
+            </div>
+            <button class="theme-toggle-btn" onclick="toggleTheme()">
+                <i class="fas fa-moon" id="theme-icon"></i>
+                <span id="theme-text">Dark Mode</span>
+            </button>
+            <button class="btn btn-secondary" onclick="toggleHistory()">
+                <i class="fas fa-history"></i>
+                Lịch sử
+            </button>
+            <button class="btn btn-secondary" onclick="toggleShortcuts()">
+                <i class="fas fa-keyboard"></i>
+                Phím tắt
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="panel-container">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-header-left">
+                        <div class="panel-title">
+                            <i class="fas fa-code"></i>
+                            Input
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="formatToggle" checked onchange="toggleFormat()">
+                            <span class="toggle-slider">
+                                    <span class="toggle-text left">Str</span>
+                                    <span class="toggle-text right">JSON</span>
+                                </span>
+                        </label>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="convertFormat()">
+                            <i class="fas fa-sync-alt"></i>
+                            Chuyển đổi
+                        </button>
+                        <button class="btn btn-primary" onclick="minifyJSON()">
+                            <i class="fas fa-compress"></i>
+                            Minify
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearAll()">
+                            <i class="fas fa-trash"></i>
+                            Xóa
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <textarea id="jsonInput"
+                              placeholder="Nhập JSON hoặc string của bạn vào đây..."
+                              spellcheck="false"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-container">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-header-left">
+                        <div class="panel-title">
+                            <i class="fas fa-file-code"></i>
+                            Output
+                        </div>
+                        <div class="fix-status" id="fixStatus">
+                            <i class="fas fa-wrench"></i>
+                            <span id="fixStatusText">Đã tự động sửa lỗi!</span>
+                        </div>
+                        <div class="view-mode-toggle">
+                            <button class="view-mode-btn active" data-mode="formatted"
+                                    onclick="changeViewMode('formatted')">
+                                <i class="fas fa-align-left"></i> Format
+                            </button>
+                            <button class="view-mode-btn" data-mode="tree" onclick="changeViewMode('tree')">
+                                <i class="fas fa-sitemap"></i> Tree
+                            </button>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="copyToClipboard()">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                        <button class="btn btn-primary" onclick="downloadJSON()">
+                            <i class="fas fa-download"></i>
+                            Tải xuống
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <pre class="output" id="formattedView"><code id="jsonOutput" class="language-json"></code></pre>
+                    <div class="json-tree" id="treeView" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-team">
+                <i class="fas fa-users-cog"></i>
+                <span>Team AppServer 1</span>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-badge">
+                <i class="fas fa-building"></i>
+                <span>Phòng Dịch vụ Ngân hàng</span>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-copyright">
+                <i class="far fa-copyright"></i>
+                <span>2025 Hong Phat</span>
+            </div>
+        </div>
+    </footer>
+
+    <div id="errorAlert" class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="errorText"></span>
+    </div>
+    <div id="successAlert" class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span id="successText">Thành công!</span>
+    </div>
+    <div id="infoAlert" class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <span id="infoText">Thông tin!</span>
+    </div>
+    <div id="warningAlert" class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="warningText">Cảnh báo!</span>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/components/prism-json.min.js"></script>
+<script>
+    let isJsonMode = true;
+    let currentViewMode = 'formatted';
+    let currentParsedJSON = null;
+    const MAX_HISTORY = 10;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeTheme();
+        loadHistory();
+        setupKeyboardShortcuts();
+
+        const jsonInput = document.getElementById('jsonInput');
+        document.getElementById('formatToggle').checked = true;
+
+        jsonInput.addEventListener('paste', (e) => {
+            setTimeout(() => {
+                convertFormat();
+            }, 0);
+        });
+    });
+
+    function autoFixJSON(jsonString) {
+        let input = jsonString.trim();
+        let changes = [];
+
+        const multipleObjectsPattern = /}\s*\n\s*{/g;
+        if (multipleObjectsPattern.test(input)) {
+            const objects = [];
+            let braceCount = 0;
+            let currentObject = '';
+            let inString = false;
+            let escapeNext = false;
+
+            for (let i = 0; i < input.length; i++) {
+                const char = input[i];
+
+                if (char === '"' && !escapeNext) {
+                    inString = !inString;
+                }
+
+                escapeNext = (char === '\\' && !escapeNext);
+
+                if (!inString) {
+                    if (char === '{') {
+                        braceCount++;
+                    } else if (char === '}') {
+                        braceCount--;
+                    }
+                }
+
+                currentObject += char;
+
+                if (braceCount === 0 && currentObject.trim().length > 0 && currentObject.trim().endsWith('}')) {
+                    objects.push(currentObject.trim());
+                    currentObject = '';
+                }
+            }
+
+            if (currentObject.trim()) {
+                objects.push(currentObject.trim());
+            }
+
+            if (objects.length > 1) {
+                input = '[\n' + objects.join(',\n') + '\n]';
+                changes.push(`Nhóm ${objects.length} objects thành array`);
+            }
+        }
+
+        let fixed = input;
+
+        if (fixed.match(/,(\s*[}\]])/g)) {
+            fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
+            changes.push('Xóa dấu phẩy thừa');
+        }
+
+        if (fixed.match(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g)) {
+            fixed = fixed.replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":');
+            changes.push('Thêm ngoặc kép cho keys');
+        }
+
+        if (fixed.includes("'")) {
+            fixed = fixed.replace(/'([^']*?)'/g, '"$1"');
+            changes.push('Chuyển ngoặc đơn → kép');
+        }
+
+        const openBraces = (fixed.match(/{/g) || []).length;
+        const closeBraces = (fixed.match(/}/g) || []).length;
+        const openBrackets = (fixed.match(/\[/g) || []).length;
+        const closeBrackets = (fixed.match(/\]/g) || []).length;
+
+        if (openBraces > closeBraces) {
+            fixed += '}'.repeat(openBraces - closeBraces);
+            changes.push(`Thêm ${openBraces - closeBraces} dấu '}'`);
+        } else if (closeBraces > openBraces) {
+            const extra = closeBraces - openBraces;
+            for (let i = 0; i < extra; i++) {
+                const idx = fixed.lastIndexOf('}');
+                if (idx !== -1) {
+                    fixed = fixed.substring(0, idx) + fixed.substring(idx + 1);
+                }
+            }
+            changes.push(`Xóa ${extra} dấu '}'`);
+        }
+
+        if (openBrackets > closeBrackets) {
+            fixed += ']'.repeat(openBrackets - closeBrackets);
+            changes.push(`Thêm ${openBrackets - closeBrackets} dấu ']'`);
+        } else if (closeBrackets > openBrackets) {
+            const extra = closeBrackets - openBrackets;
+            for (let i = 0; i < extra; i++) {
+                const idx = fixed.lastIndexOf(']');
+                if (idx !== -1) {
+                    fixed = fixed.substring(0, idx) + fixed.substring(idx + 1);
+                }
+            }
+            changes.push(`Xóa ${extra} dấu ']'`);
+        }
+
+        fixed = fixed.replace(/"\s*\n\s*"/g, '",\n"');
+        fixed = fixed.replace(/([}\]])\s*\n\s*([{"\[])/g, '$1,\n$2');
+        fixed = fixed.replace(/,+/g, ',');
+
+        return {
+            fixed: fixed,
+            changes: changes.length > 0 ? changes : ['Tối ưu định dạng']
+        };
+    }
+
+    function setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                convertFormat();
+                showAlert('info', 'Đã format JSON!');
+            }
+
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                clearAll();
+                showAlert('info', 'Đã xóa tất cả!');
+            }
+
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                downloadJSON();
+            }
+
+            if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                e.preventDefault();
+                toggleTheme();
+            }
+
+            if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+                e.preventDefault();
+                toggleHistory();
+            }
+        });
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+
+        if (currentTheme === 'dark') {
+            html.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            document.getElementById('prism-dark').disabled = true;
+            document.getElementById('prism-light').disabled = false;
+            themeIcon.className = 'fas fa-moon';
+            themeText.textContent = 'Dark Mode';
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            document.getElementById('prism-dark').disabled = false;
+            document.getElementById('prism-light').disabled = true;
+            themeIcon.className = 'fas fa-sun';
+            themeText.textContent = 'Light Mode';
+        }
+
+        if (currentViewMode === 'formatted') {
+            const jsonOutput = document.getElementById('jsonOutput');
+            if (jsonOutput.textContent.trim()) {
+                Prism.highlightElement(jsonOutput);
+            }
+        }
+    }
+
+    function initializeTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('prism-dark').disabled = false;
+            document.getElementById('prism-light').disabled = true;
+            if (themeIcon) {
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Light Mode';
+            }
+        }
+    }
+
+    function toggleFormat() {
+        isJsonMode = document.getElementById('formatToggle').checked;
+        convertFormat();
+    }
+
+    function convertFormat() {
+        const input = document.getElementById('jsonInput').value.trim();
+        const errorAlert = document.getElementById('errorAlert');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const fixStatus = document.getElementById('fixStatus');
+        const autoFixEnabled = document.getElementById('autoFixToggle').checked;
+
+        if (!input) {
+            jsonOutput.textContent = '';
+            document.getElementById('treeView').innerHTML = '';
+            errorAlert.classList.remove('show');
+            fixStatus.classList.remove('show');
+            return;
+        }
+
+        try {
+            if (isJsonMode) {
+                let processedInput = input;
+
+                if (input.startsWith('"') && input.endsWith('"')) {
+                    try {
+                        processedInput = JSON.parse(input);
+                    } catch (e) {
+                        processedInput = input;
+                    }
+                }
+
+                try {
+                    const parsedJson = JSON.parse(processedInput);
+                    currentParsedJSON = parsedJson;
+                    const formattedJson = JSON.stringify(parsedJson, null, 2);
+
+                    jsonOutput.textContent = formattedJson;
+                    Prism.highlightElement(jsonOutput);
+
+                    if (currentViewMode === 'tree') {
+                        renderTreeView(parsedJson);
+                    }
+
+                    saveToHistory(formattedJson);
+                    fixStatus.classList.remove('show');
+                    errorAlert.classList.remove('show');
+                } catch (parseError) {
+                    if (autoFixEnabled) {
+                        const result = autoFixJSON(processedInput);
+
+                        try {
+                            const parsedJson = JSON.parse(result.fixed);
+                            currentParsedJSON = parsedJson;
+                            const formattedJson = JSON.stringify(parsedJson, null, 2);
+
+                            jsonOutput.textContent = formattedJson;
+                            Prism.highlightElement(jsonOutput);
+
+                            if (currentViewMode === 'tree') {
+                                renderTreeView(parsedJson);
+                            }
+
+                            saveToHistory(formattedJson);
+
+                            fixStatus.classList.add('show');
+                            document.getElementById('fixStatusText').textContent =
+                                `✅ ${result.changes.join(', ')}`;
+
+                            showAlert('warning', `Auto-fix: ${result.changes.join(', ')}`);
+
+                            setTimeout(() => {
+                                fixStatus.classList.remove('show');
+                            }, 7000);
+
+                            errorAlert.classList.remove('show');
+                        } catch (fixError) {
+                            throw new Error(`Không thể tự động sửa: ${fixError.message}`);
+                        }
+                    } else {
+                        throw parseError;
+                    }
+                }
+            } else {
+                const parsedJson = JSON.parse(input);
+                currentParsedJSON = parsedJson;
+                const jsonString = JSON.stringify(JSON.stringify(parsedJson));
+                jsonOutput.textContent = jsonString;
+                Prism.highlightElement(jsonOutput);
+
+                saveToHistory(jsonString);
+                fixStatus.classList.remove('show');
+            }
+            errorAlert.classList.remove('show');
+        } catch (err) {
+            errorAlert.classList.add('show');
+            document.getElementById('errorText').textContent = err.message;
+            jsonOutput.textContent = '';
+            document.getElementById('treeView').innerHTML = '';
+            fixStatus.classList.remove('show');
+
+            setTimeout(() => {
+                errorAlert.classList.remove('show');
+            }, 5000);
+        }
+    }
+
+    function minifyJSON() {
+        const input = document.getElementById('jsonInput').value.trim();
+        const jsonOutput = document.getElementById('jsonOutput');
+
+        if (!input) {
+            showAlert('error', 'Vui lòng nhập JSON!');
+            return;
+        }
+
+        try {
+            const parsedJson = JSON.parse(input);
+            const minified = JSON.stringify(parsedJson);
+
+            jsonOutput.textContent = minified;
+            Prism.highlightElement(jsonOutput);
+
+            showAlert('success', 'Đã minify JSON!');
+            saveToHistory(minified);
+        } catch (err) {
+            showAlert('error', `Lỗi: ${err.message}`);
+        }
+    }
+
+    function clearAll() {
+        document.getElementById('jsonInput').value = '';
+        document.getElementById('jsonOutput').textContent = '';
+        document.getElementById('treeView').innerHTML = '';
+        document.getElementById('fixStatus').classList.remove('show');
+        currentParsedJSON = null;
+        hideAllAlerts();
+    }
+
+    async function copyToClipboard() {
+        const jsonOutput = document.getElementById('jsonOutput').textContent;
+
+        if (!jsonOutput.trim()) {
+            showAlert('error', 'Không có gì để copy!');
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(jsonOutput);
+            showAlert('success', 'Đã copy vào clipboard!');
+        } catch (err) {
+            showAlert('error', 'Không thể copy!');
+        }
+    }
+
+    function downloadJSON() {
+        const jsonOutput = document.getElementById('jsonOutput').textContent;
+
+        if (!jsonOutput.trim()) {
+            showAlert('error', 'Không có gì để tải!');
+            return;
+        }
+
+        try {
+            const blob = new Blob([jsonOutput], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            a.href = url;
+            a.download = `json-${timestamp}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showAlert('success', 'Đã tải xuống!');
+        } catch (err) {
+            showAlert('error', 'Không thể tải xuống!');
+        }
+    }
+
+    function changeViewMode(mode) {
+        currentViewMode = mode;
+
+        document.querySelectorAll('.view-mode-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.mode === mode) {
+                btn.classList.add('active');
+            }
+        });
+
+        const formattedView = document.getElementById('formattedView');
+        const treeView = document.getElementById('treeView');
+
+        if (mode === 'formatted') {
+            formattedView.style.display = 'block';
+            treeView.style.display = 'none';
+        } else {
+            formattedView.style.display = 'none';
+            treeView.style.display = 'block';
+
+            if (currentParsedJSON) {
+                renderTreeView(currentParsedJSON);
+            }
+        }
+    }
+
+    function renderTreeView(obj, container = null) {
+        if (!container) {
+            container = document.getElementById('treeView');
+            container.innerHTML = '';
+        }
+
+        const tree = createTreeNode(obj, 'root', true);
+        container.appendChild(tree);
+    }
+
+    function createTreeNode(value, key, isRoot = false) {
+        const line = document.createElement('div');
+        line.className = 'tree-line';
+
+        if (value === null) {
+            line.innerHTML = `<span class="tree-key">${escapeHtml(key)}:</span> <span class="tree-null">null</span>`;
+            return line;
+        }
+
+        const type = Array.isArray(value) ? 'array' : typeof value;
+
+        switch (type) {
+            case 'object':
+                const objToggle = document.createElement('span');
+                objToggle.className = 'tree-toggle';
+                objToggle.textContent = '▼';
+                objToggle.onclick = function () {
+                    this.textContent = this.textContent === '▼' ? '▶' : '▼';
+                    const children = this.parentElement.querySelector('.tree-node');
+                    children.classList.toggle('tree-collapsed');
+                };
+
+                line.appendChild(objToggle);
+                const objKey = document.createElement('span');
+                objKey.className = 'tree-key';
+                objKey.textContent = isRoot ? 'root' : key;
+                line.appendChild(objKey);
+                line.appendChild(document.createTextNode(': {'));
+
+                const objNode = document.createElement('div');
+                objNode.className = 'tree-node';
+
+                Object.entries(value).forEach(([k, v]) => {
+                    objNode.appendChild(createTreeNode(v, k));
+                });
+
+                line.appendChild(objNode);
+
+                const closeBrace = document.createElement('div');
+                closeBrace.className = 'tree-line';
+                closeBrace.textContent = '}';
+                line.appendChild(closeBrace);
+                break;
+
+            case 'array':
+                const arrToggle = document.createElement('span');
+                arrToggle.className = 'tree-toggle';
+                arrToggle.textContent = '▼';
+                arrToggle.onclick = function () {
+                    this.textContent = this.textContent === '▼' ? '▶' : '▼';
+                    const children = this.parentElement.querySelector('.tree-node');
+                    children.classList.toggle('tree-collapsed');
+                };
+
+                line.appendChild(arrToggle);
+                const arrKey = document.createElement('span');
+                arrKey.className = 'tree-key';
+                arrKey.textContent = key;
+                line.appendChild(arrKey);
+                line.appendChild(document.createTextNode(`: [${value.length}]`));
+
+                const arrNode = document.createElement('div');
+                arrNode.className = 'tree-node';
+
+                value.forEach((item, index) => {
+                    arrNode.appendChild(createTreeNode(item, `[${index}]`));
+                });
+
+                line.appendChild(arrNode);
+
+                const closeBracket = document.createElement('div');
+                closeBracket.className = 'tree-line';
+                closeBracket.textContent = ']';
+                line.appendChild(closeBracket);
+                break;
+
+            case 'string':
+                line.innerHTML = `<span class="tree-key">${escapeHtml(key)}:</span> <span class="tree-string">"${escapeHtml(String(value))}"</span>`;
+                break;
+
+            case 'number':
+                line.innerHTML = `<span class="tree-key">${escapeHtml(key)}:</span> <span class="tree-number">${value}</span>`;
+                break;
+
+            case 'boolean':
+                line.innerHTML = `<span class="tree-key">${escapeHtml(key)}:</span> <span class="tree-boolean">${value}</span>`;
+                break;
+
+            default:
+                line.innerHTML = `<span class="tree-key">${escapeHtml(key)}:</span> <span class="tree-value">${escapeHtml(String(value))}</span>`;
+        }
+
+        return line;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function saveToHistory(json) {
+        try {
+            let history = JSON.parse(localStorage.getItem('jsonHistory') || '[]');
+
+            const entry = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                data: json.substring(0, 2000),
+                preview: json.substring(0, 100) + (json.length > 100 ? '...' : '')
+            };
+
+            history.unshift(entry);
+
+            if (history.length > MAX_HISTORY) {
+                history = history.slice(0, MAX_HISTORY);
+            }
+
+            localStorage.setItem('jsonHistory', JSON.stringify(history));
+            loadHistory();
+        } catch (err) {
+            console.error('Save history error:', err);
+        }
+    }
+
+    function loadHistory() {
+        try {
+            const history = JSON.parse(localStorage.getItem('jsonHistory') || '[]');
+            const historyList = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Chưa có lịch sử</p>';
+                return;
+            }
+
+            historyList.innerHTML = history.map(entry => {
+                const date = new Date(entry.timestamp);
+                const timeStr = date.toLocaleString('vi-VN');
+
+                return `
+                        <div class="history-item" onclick="loadFromHistory(${entry.id})">
+                            <div class="history-item-header">
+                                <span class="history-item-time">${timeStr}</span>
+                                <button class="btn btn-secondary btn-icon" onclick="event.stopPropagation(); deleteHistoryItem(${entry.id})" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="history-item-preview">${escapeHtml(entry.preview)}</div>
+                        </div>
+                    `;
+            }).join('');
+        } catch (err) {
+            console.error('Load history error:', err);
+        }
+    }
+
+    function loadFromHistory(id) {
+        try {
+            const history = JSON.parse(localStorage.getItem('jsonHistory') || '[]');
+            const entry = history.find(e => e.id === id);
+
+            if (entry) {
+                document.getElementById('jsonInput').value = entry.data;
+                convertFormat();
+                toggleHistory();
+                showAlert('success', 'Đã tải từ lịch sử!');
+            }
+        } catch (err) {
+            showAlert('error', 'Không thể tải!');
+        }
+    }
+
+    function deleteHistoryItem(id) {
+        try {
+            let history = JSON.parse(localStorage.getItem('jsonHistory') || '[]');
+            history = history.filter(e => e.id !== id);
+            localStorage.setItem('jsonHistory', JSON.stringify(history));
+            loadHistory();
+            showAlert('success', 'Đã xóa!');
+        } catch (err) {
+            showAlert('error', 'Không thể xóa!');
+        }
+    }
+
+    function clearHistory() {
+        if (confirm('Xóa toàn bộ lịch sử (10 items)?')) {
+            localStorage.removeItem('jsonHistory');
+            loadHistory();
+            showAlert('success', 'Đã xóa toàn bộ!');
+        }
+    }
+
+    function toggleHistory() {
+        const sidebar = document.getElementById('historySidebar');
+        const overlay = document.getElementById('historyOverlay');
+
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
+
+    function toggleShortcuts() {
+        const shortcuts = document.getElementById('shortcutsInfo');
+        shortcuts.classList.toggle('show');
+    }
+
+    function showAlert(type, message) {
+        const alertId = type + 'Alert';
+        const textId = type + 'Text';
+        const alert = document.getElementById(alertId);
+        const text = document.getElementById(textId);
+
+        if (alert && text) {
+            text.textContent = message;
+            alert.classList.add('show');
+
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 3000);
+        }
+    }
+
+    function hideAllAlerts() {
+        document.querySelectorAll('.alert').forEach(alert => {
+            alert.classList.remove('show');
+        });
+    }
+</script>
+</body>
+</html>
