@@ -6,10 +6,6 @@
     <title>JSON Formatter Pro - Ultimate</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism.min.css"
-          id="prism-light">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism-okaidia.min.css"
-          id="prism-dark" disabled>
     <style>
         :root {
             --primary-color: #0070F3;
@@ -53,7 +49,6 @@
             flex-direction: column;
         }
 
-        /* Header - Compact Version */
         .header {
             text-align: center;
             margin-bottom: 1.5rem;
@@ -273,7 +268,6 @@
             color: var(--primary-color);
         }
 
-        /* FIX: Panel content với scroll đúng cách */
         .panel-content {
             flex: 1;
             overflow: hidden;
@@ -452,37 +446,72 @@
             flex-wrap: wrap;
         }
 
-        /* FIX: Textarea với word wrap tốt hơn */
-        textarea {
+        /* ✨ INPUT EDITOR WITH SYNTAX HIGHLIGHTING */
+        .input-editor-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #jsonInputHighlight {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             padding: 1rem;
+            margin: 0;
             border: none;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9rem;
-            line-height: 1.5;
-            color: var(--text-primary);
+            line-height: 1.6;
             background: var(--surface-color);
-            resize: none;
-            outline: none;
-
-            /* CRITICAL: Word wrap settings */
             overflow-y: auto;
             overflow-x: auto;
             white-space: pre-wrap;
             word-wrap: break-word;
             overflow-wrap: break-word;
             word-break: break-word;
+            pointer-events: none;
+            color: transparent;
         }
 
-        /* FIX: Pre output với word wrap */
+        #jsonInput {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            border: none;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: transparent;
+            caret-color: var(--text-primary);
+            background: transparent;
+            resize: none;
+            outline: none;
+            overflow-y: auto;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            z-index: 2;
+        }
+
+        #jsonInput::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
         pre.output {
             margin: 0;
             padding: 1rem;
             height: 100%;
             background: var(--surface-color);
-
-            /* CRITICAL: Scroll và wrap settings */
             overflow-y: auto;
             overflow-x: auto;
             white-space: pre-wrap;
@@ -495,26 +524,53 @@
             background: none;
             padding: 0;
             display: block;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9rem;
-            line-height: 1.5;
-
-            /* CRITICAL: Word wrap cho code */
+            line-height: 1.6;
             white-space: pre-wrap;
             word-wrap: break-word;
             overflow-wrap: break-word;
             word-break: break-word;
         }
 
-        /* FIX: JSON Tree với word wrap */
+        /* ✨ JSON SYNTAX HIGHLIGHTING - Inspired by CodeBeautify */
+        /* Light Mode */
+        .json-key {
+            color: #881391 !important; /* Purple for keys */
+            font-weight: 600 !important;
+        }
+
+        .json-string {
+            color: #1A1AA6 !important; /* Deep blue for strings */
+        }
+
+        .json-number {
+            color: #1C00CF !important; /* Blue for numbers */
+            font-weight: 500 !important;
+        }
+
+        .json-boolean {
+            color: #0D22AA !important; /* Blue for booleans */
+            font-weight: 600 !important;
+        }
+
+        .json-null {
+            color: #808080 !important; /* Gray for null */
+            font-weight: 600 !important;
+            font-style: italic;
+        }
+
+        .json-punctuation {
+            color: #000000 !important; /* Black for brackets/braces */
+        }
+
+        /* JSON Tree View - Light Mode */
         .json-tree {
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             padding: 1rem;
             font-size: 0.9rem;
-            line-height: 1.5;
+            line-height: 1.6;
             height: 100%;
-
-            /* CRITICAL: Scroll và wrap */
             overflow-y: auto;
             overflow-x: auto;
             white-space: pre-wrap;
@@ -533,25 +589,29 @@
         }
 
         .tree-value {
-            color: #1c00cf;
+            color: #000000;
             word-break: break-all;
         }
 
         .tree-string {
-            color: #c41a16;
+            color: #1A1AA6;
             word-break: break-all;
         }
 
         .tree-number {
-            color: #1c00cf;
+            color: #1C00CF;
+            font-weight: 500;
         }
 
         .tree-boolean {
-            color: #0d22aa;
+            color: #0D22AA;
+            font-weight: 600;
         }
 
         .tree-null {
             color: #808080;
+            font-weight: 600;
+            font-style: italic;
         }
 
         .tree-toggle {
@@ -559,12 +619,13 @@
             user-select: none;
             display: inline-block;
             width: 20px;
-            color: var(--primary-color);
+            color: #881391;
             font-weight: bold;
+            font-size: 0.9rem;
         }
 
         .tree-toggle:hover {
-            color: var(--primary-hover);
+            color: #6B0F74;
         }
 
         .tree-collapsed {
@@ -578,42 +639,119 @@
         }
 
         .tree-line:hover {
-            background: rgba(0, 112, 243, 0.05);
+            background: rgba(136, 19, 145, 0.05);
+        }
+
+        /* Dark Mode Colors */
+        [data-theme="dark"] {
+            --background-color: #1E1E1E;
+            --surface-color: #252526;
+            --text-primary: #D4D4D4;
+            --text-secondary: #858585;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(to bottom right, #1E1E1E, #2D2D30);
+        }
+
+        [data-theme="dark"] .panel-header {
+            background: #2D2D30;
+            border-color: #3E3E42;
+        }
+
+        [data-theme="dark"] #jsonInput {
+            caret-color: #D4D4D4;
+        }
+
+        [data-theme="dark"] #jsonInput::placeholder {
+            color: #858585;
+        }
+
+        [data-theme="dark"] #jsonInputHighlight,
+        [data-theme="dark"] pre.output {
+            background: #1E1E1E;
+            color: #D4D4D4;
+        }
+
+        [data-theme="dark"] .view-mode-toggle {
+            background: #2D2D30;
+        }
+
+        [data-theme="dark"] .view-mode-btn.active {
+            background: #3E3E42;
+        }
+
+        [data-theme="dark"] .json-key {
+            color: #9CDCFE !important;
+        }
+
+        [data-theme="dark"] .json-string {
+            color: #CE9178 !important;
+        }
+
+        [data-theme="dark"] .json-number {
+            color: #B5CEA8 !important;
+        }
+
+        [data-theme="dark"] .json-boolean {
+            color: #569CD6 !important;
+        }
+
+        [data-theme="dark"] .json-null {
+            color: #858585 !important;
+        }
+
+        [data-theme="dark"] .json-punctuation {
+            color: #D4D4D4 !important;
         }
 
         [data-theme="dark"] .tree-key {
-            color: #9cdcfe;
+            color: #9CDCFE;
         }
 
         [data-theme="dark"] .tree-value {
-            color: #ce9178;
+            color: #D4D4D4;
         }
 
         [data-theme="dark"] .tree-string {
-            color: #ce9178;
+            color: #CE9178;
         }
 
         [data-theme="dark"] .tree-number {
-            color: #b5cea8;
+            color: #B5CEA8;
         }
 
         [data-theme="dark"] .tree-boolean {
-            color: #569cd6;
+            color: #569CD6;
         }
 
         [data-theme="dark"] .tree-null {
-            color: #808080;
+            color: #858585;
         }
 
-        /* Custom Scrollbar - Đẹp hơn */
-        textarea::-webkit-scrollbar,
+        [data-theme="dark"] .tree-toggle {
+            color: #9CDCFE;
+        }
+
+        [data-theme="dark"] .tree-toggle:hover {
+            color: #7CB8F0;
+        }
+
+        [data-theme="dark"] .tree-line:hover {
+            background: rgba(156, 220, 254, 0.1);
+        }
+
+        /* Custom Scrollbar */
+        #jsonInput::-webkit-scrollbar,
+        #jsonInputHighlight::-webkit-scrollbar,
         pre.output::-webkit-scrollbar,
         .json-tree::-webkit-scrollbar {
             width: 12px;
             height: 12px;
         }
 
-        textarea::-webkit-scrollbar-track,
+        #jsonInput::-webkit-scrollbar-track,
+        #jsonInputHighlight::-webkit-scrollbar-track,
         pre.output::-webkit-scrollbar-track,
         .json-tree::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.05);
@@ -621,7 +759,8 @@
             margin: 4px;
         }
 
-        textarea::-webkit-scrollbar-thumb,
+        #jsonInput::-webkit-scrollbar-thumb,
+        #jsonInputHighlight::-webkit-scrollbar-thumb,
         pre.output::-webkit-scrollbar-thumb,
         .json-tree::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
@@ -629,21 +768,33 @@
             border: 2px solid var(--surface-color);
         }
 
-        textarea::-webkit-scrollbar-thumb:hover,
+        #jsonInput::-webkit-scrollbar-thumb:hover,
+        #jsonInputHighlight::-webkit-scrollbar-thumb:hover,
         pre.output::-webkit-scrollbar-thumb:hover,
         .json-tree::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, var(--primary-hover), var(--primary-color));
         }
 
-        /* Scrollbar corner */
-        textarea::-webkit-scrollbar-corner,
+        [data-theme="dark"] #jsonInput::-webkit-scrollbar-track,
+        [data-theme="dark"] #jsonInputHighlight::-webkit-scrollbar-track,
+        [data-theme="dark"] pre.output::-webkit-scrollbar-track,
+        [data-theme="dark"] .json-tree::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="dark"] #jsonInput::-webkit-scrollbar-thumb,
+        [data-theme="dark"] #jsonInputHighlight::-webkit-scrollbar-thumb,
+        [data-theme="dark"] pre.output::-webkit-scrollbar-thumb,
+        [data-theme="dark"] .json-tree::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #569CD6, #4A8BC2);
+            border-color: #252526;
+        }
+
+        #jsonInput::-webkit-scrollbar-corner,
+        #jsonInputHighlight::-webkit-scrollbar-corner,
         pre.output::-webkit-scrollbar-corner,
         .json-tree::-webkit-scrollbar-corner {
             background: var(--surface-color);
-        }
-
-        textarea:focus {
-            background: #F9FAFB;
         }
 
         .alert {
@@ -697,54 +848,6 @@
             }
         }
 
-        [data-theme="dark"] {
-            --background-color: #0A0A0A;
-            --surface-color: #1C1C1E;
-            --text-primary: #F2F2F7;
-            --text-secondary: #AEAEB2;
-        }
-
-        [data-theme="dark"] body {
-            background: linear-gradient(to bottom right, #0A0A0A, #1C1C1E);
-        }
-
-        [data-theme="dark"] .panel-header {
-            background: #0A0A0A;
-            border-color: #2C2C2E;
-        }
-
-        [data-theme="dark"] textarea,
-        [data-theme="dark"] pre.output {
-            background: #0A0A0A;
-            color: #F2F2F7;
-        }
-
-        [data-theme="dark"] textarea:focus {
-            background: #1C1C1E;
-        }
-
-        [data-theme="dark"] .view-mode-toggle {
-            background: #0A0A0A;
-        }
-
-        [data-theme="dark"] .view-mode-btn.active {
-            background: #2C2C2E;
-        }
-
-        [data-theme="dark"] textarea::-webkit-scrollbar-track,
-        [data-theme="dark"] pre.output::-webkit-scrollbar-track,
-        [data-theme="dark"] .json-tree::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        [data-theme="dark"] textarea::-webkit-scrollbar-thumb,
-        [data-theme="dark"] pre.output::-webkit-scrollbar-thumb,
-        [data-theme="dark"] .json-tree::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
-            border-color: #1C1C1E;
-        }
-
-        /* Footer - Compact Version */
         .footer {
             margin-top: 1.5rem;
             padding: 1rem 1.5rem;
@@ -901,9 +1004,9 @@
                         <label class="toggle-switch">
                             <input type="checkbox" id="formatToggle" checked onchange="toggleFormat()">
                             <span class="toggle-slider">
-                                    <span class="toggle-text left">Str</span>
-                                    <span class="toggle-text right">JSON</span>
-                                </span>
+                                <span class="toggle-text left">Str</span>
+                                <span class="toggle-text right">JSON</span>
+                            </span>
                         </label>
                     </div>
                     <div class="btn-group">
@@ -922,9 +1025,12 @@
                     </div>
                 </div>
                 <div class="panel-content">
-                    <textarea id="jsonInput"
-                              placeholder="Nhập JSON hoặc string của bạn vào đây..."
-                              spellcheck="false"></textarea>
+                    <div class="input-editor-wrapper">
+                        <pre id="jsonInputHighlight"><code></code></pre>
+                        <textarea id="jsonInput"
+                                  placeholder="Nhập JSON hoặc string của bạn vào đây..."
+                                  spellcheck="false"></textarea>
+                    </div>
                 </div>
             </div>
         </div>
@@ -963,7 +1069,7 @@
                     </div>
                 </div>
                 <div class="panel-content">
-                    <pre class="output" id="formattedView"><code id="jsonOutput" class="language-json"></code></pre>
+                    <pre class="output" id="formattedView"><code id="jsonOutput"></code></pre>
                     <div class="json-tree" id="treeView" style="display: none;"></div>
                 </div>
             </div>
@@ -1011,8 +1117,6 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/components/prism-json.min.js"></script>
 <script>
     let isJsonMode = true;
     let currentViewMode = 'formatted';
@@ -1021,16 +1125,70 @@
     document.addEventListener('DOMContentLoaded', () => {
         initializeTheme();
         setupKeyboardShortcuts();
+        setupInputHighlighting();
 
-        const jsonInput = document.getElementById('jsonInput');
         document.getElementById('formatToggle').checked = true;
+    });
 
-        jsonInput.addEventListener('paste', (e) => {
+    // ✨ SETUP INPUT SYNTAX HIGHLIGHTING
+    function setupInputHighlighting() {
+        const jsonInput = document.getElementById('jsonInput');
+        const jsonInputHighlight = document.getElementById('jsonInputHighlight');
+
+        // Sync scroll between textarea and highlight layer
+        jsonInput.addEventListener('scroll', () => {
+            jsonInputHighlight.scrollTop = jsonInput.scrollTop;
+            jsonInputHighlight.scrollLeft = jsonInput.scrollLeft;
+        });
+
+        // Update highlighting on input
+        jsonInput.addEventListener('input', () => {
+            updateInputHighlight();
+        });
+
+        // Update on paste
+        jsonInput.addEventListener('paste', () => {
             setTimeout(() => {
+                updateInputHighlight();
                 convertFormat();
             }, 0);
         });
-    });
+    }
+
+    function updateInputHighlight() {
+        const jsonInput = document.getElementById('jsonInput');
+        const jsonInputHighlight = document.getElementById('jsonInputHighlight');
+        const text = jsonInput.value;
+
+        if (!text) {
+            jsonInputHighlight.innerHTML = '';
+            return;
+        }
+
+        // Apply syntax highlighting
+        const highlighted = syntaxHighlight(text);
+        jsonInputHighlight.innerHTML = highlighted;
+    }
+
+    // ✨ CUSTOM JSON SYNTAX HIGHLIGHTER
+    function syntaxHighlight(json) {
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            let cls = 'json-number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'json-key';
+                } else {
+                    cls = 'json-string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'json-boolean';
+            } else if (/null/.test(match)) {
+                cls = 'json-null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
 
     function autoFixJSON(jsonString) {
         let input = jsonString.trim();
@@ -1174,24 +1332,20 @@
         if (currentTheme === 'dark') {
             html.removeAttribute('data-theme');
             localStorage.setItem('theme', 'light');
-            document.getElementById('prism-dark').disabled = true;
-            document.getElementById('prism-light').disabled = false;
             themeIcon.className = 'fas fa-moon';
             themeText.textContent = 'Dark Mode';
         } else {
             html.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
-            document.getElementById('prism-dark').disabled = false;
-            document.getElementById('prism-light').disabled = true;
             themeIcon.className = 'fas fa-sun';
             themeText.textContent = 'Light Mode';
         }
 
-        if (currentViewMode === 'formatted') {
-            const jsonOutput = document.getElementById('jsonOutput');
-            if (jsonOutput.textContent.trim()) {
-                Prism.highlightElement(jsonOutput);
-            }
+        // Re-render with new colors
+        updateInputHighlight();
+        if (currentViewMode === 'formatted' && currentParsedJSON) {
+            const formattedJson = JSON.stringify(currentParsedJSON, null, 2);
+            document.getElementById('jsonOutput').innerHTML = syntaxHighlight(formattedJson);
         }
     }
 
@@ -1202,8 +1356,6 @@
 
         if (savedTheme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
-            document.getElementById('prism-dark').disabled = false;
-            document.getElementById('prism-light').disabled = true;
             if (themeIcon) {
                 themeIcon.className = 'fas fa-sun';
                 themeText.textContent = 'Light Mode';
@@ -1224,7 +1376,7 @@
         const autoFixEnabled = document.getElementById('autoFixToggle').checked;
 
         if (!input) {
-            jsonOutput.textContent = '';
+            jsonOutput.innerHTML = '';
             document.getElementById('treeView').innerHTML = '';
             errorAlert.classList.remove('show');
             fixStatus.classList.remove('show');
@@ -1248,8 +1400,7 @@
                     currentParsedJSON = parsedJson;
                     const formattedJson = JSON.stringify(parsedJson, null, 2);
 
-                    jsonOutput.textContent = formattedJson;
-                    Prism.highlightElement(jsonOutput);
+                    jsonOutput.innerHTML = syntaxHighlight(formattedJson);
 
                     if (currentViewMode === 'tree') {
                         renderTreeView(parsedJson);
@@ -1266,8 +1417,7 @@
                             currentParsedJSON = parsedJson;
                             const formattedJson = JSON.stringify(parsedJson, null, 2);
 
-                            jsonOutput.textContent = formattedJson;
-                            Prism.highlightElement(jsonOutput);
+                            jsonOutput.innerHTML = syntaxHighlight(formattedJson);
 
                             if (currentViewMode === 'tree') {
                                 renderTreeView(parsedJson);
@@ -1296,7 +1446,6 @@
                 currentParsedJSON = parsedJson;
                 const jsonString = JSON.stringify(JSON.stringify(parsedJson));
                 jsonOutput.textContent = jsonString;
-                Prism.highlightElement(jsonOutput);
 
                 fixStatus.classList.remove('show');
             }
@@ -1304,7 +1453,7 @@
         } catch (err) {
             errorAlert.classList.add('show');
             document.getElementById('errorText').textContent = err.message;
-            jsonOutput.textContent = '';
+            jsonOutput.innerHTML = '';
             document.getElementById('treeView').innerHTML = '';
             fixStatus.classList.remove('show');
 
@@ -1326,9 +1475,9 @@
         try {
             const parsedJson = JSON.parse(input);
             const minified = JSON.stringify(parsedJson);
+            currentParsedJSON = parsedJson;
 
             jsonOutput.textContent = minified;
-            Prism.highlightElement(jsonOutput);
 
             showAlert('success', 'Đã minify JSON!');
         } catch (err) {
@@ -1338,7 +1487,8 @@
 
     function clearAll() {
         document.getElementById('jsonInput').value = '';
-        document.getElementById('jsonOutput').textContent = '';
+        document.getElementById('jsonInputHighlight').innerHTML = '';
+        document.getElementById('jsonOutput').innerHTML = '';
         document.getElementById('treeView').innerHTML = '';
         document.getElementById('fixStatus').classList.remove('show');
         currentParsedJSON = null;
