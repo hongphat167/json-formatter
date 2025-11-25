@@ -1189,11 +1189,18 @@
     function autoFixJSON(jsonString) {
         let input = jsonString.trim();
         let changes = [];
+        let beforeArrayFix = input;
+        input = input.replace(/\["\{([^}]*)}]/g, '["{$1}"]');
+        input = input.replace(/\["([^"]*[^"])](?=\s*[,}])/g, '["$1"]');
+
+        if (input !== beforeArrayFix) {
+            changes.push('Sửa chuỗi JSON thiếu dấu ngoặc kép');
+        }
+
         let fixed = '';
         let inString = false;
         let escapeNext = false;
         let isValue = false;
-        let stringStart = -1;
 
         for (let i = 0; i < input.length; i++) {
             const char = input[i];
@@ -1212,7 +1219,6 @@
             if (char === '"') {
                 if (!inString) {
                     inString = true;
-                    stringStart = i;
                     fixed += char;
 
                     let j = i - 1;
@@ -1229,13 +1235,13 @@
                     const nextSignificant = j < input.length ? input[j] : '';
 
                     if (isValue && nextSignificant !== ',' && nextSignificant !== '}' && nextSignificant !== ']' && nextSignificant !== '') {
-                        // This is an unescaped quote inside the value - escape it
                         fixed += '\\"';
                         if (changes.indexOf('Escape dấu ngoặc kép trong string') === -1) {
                             changes.push('Escape dấu ngoặc kép trong string');
                         }
                         continue;
                     } else {
+                        // This is a proper closing quote
                         fixed += char;
                         inString = false;
                         isValue = false;
@@ -1375,7 +1381,6 @@
         if (dupCommaCount > 0) {
             changes.push('Xóa dấu phẩy trùng lặp');
         }
-
         fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
 
         return {
@@ -1531,8 +1536,7 @@
             } else {
                 const parsedJson = JSON.parse(input);
                 currentParsedJSON = parsedJson;
-                const jsonString = JSON.stringify(JSON.stringify(parsedJson));
-                jsonOutput.textContent = jsonString;
+                jsonOutput.textContent = JSON.stringify(JSON.stringify(parsedJson));
 
                 fixStatus.classList.remove('show');
             }
