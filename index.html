@@ -1027,9 +1027,9 @@
                 <div class="panel-content">
                     <div class="input-editor-wrapper">
                         <pre id="jsonInputHighlight"><code></code></pre>
-                        <textarea id="jsonInput"
-                                  placeholder="Nhập JSON hoặc string của bạn vào đây..."
-                                  spellcheck="false"></textarea>
+                        <label for="jsonInput"></label><textarea id="jsonInput"
+                                                                 placeholder="Nhập JSON hoặc string của bạn vào đây..."
+                                                                 spellcheck="false"></textarea>
                     </div>
                 </div>
             </div>
@@ -1130,7 +1130,6 @@
         document.getElementById('formatToggle').checked = true;
     });
 
-    // ✨ SETUP INPUT SYNTAX HIGHLIGHTING
     function setupInputHighlighting() {
         const jsonInput = document.getElementById('jsonInput');
         const jsonInputHighlight = document.getElementById('jsonInputHighlight');
@@ -1165,12 +1164,9 @@
             return;
         }
 
-        // Apply syntax highlighting
-        const highlighted = syntaxHighlight(text);
-        jsonInputHighlight.innerHTML = highlighted;
+        jsonInputHighlight.innerHTML = syntaxHighlight(text);
     }
 
-    // ✨ CUSTOM JSON SYNTAX HIGHLIGHTER
     function syntaxHighlight(json) {
         json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
@@ -1193,25 +1189,96 @@
     function autoFixJSON(jsonString) {
         let input = jsonString.trim();
         let changes = [];
+        let fixed = '';
+        let inString = false;
+        let escapeNext = false;
+        let isValue = false;
+        let stringStart = -1;
+
+        for (let i = 0; i < input.length; i++) {
+            const char = input[i];
+            if (escapeNext) {
+                fixed += char;
+                escapeNext = false;
+                continue;
+            }
+
+            if (char === '\\') {
+                fixed += char;
+                escapeNext = true;
+                continue;
+            }
+
+            if (char === '"') {
+                if (!inString) {
+                    inString = true;
+                    stringStart = i;
+                    fixed += char;
+
+                    let j = i - 1;
+                    while (j >= 0 && /\s/.test(input[j])) {
+                        j--;
+                    }
+                    isValue = j >= 0 && input[j] === ':';
+                } else {
+                    let j = i + 1;
+                    while (j < input.length && /\s/.test(input[j])) {
+                        j++;
+                    }
+
+                    const nextSignificant = j < input.length ? input[j] : '';
+
+                    if (isValue && nextSignificant !== ',' && nextSignificant !== '}' && nextSignificant !== ']' && nextSignificant !== '') {
+                        // This is an unescaped quote inside the value - escape it
+                        fixed += '\\"';
+                        if (changes.indexOf('Escape dấu ngoặc kép trong string') === -1) {
+                            changes.push('Escape dấu ngoặc kép trong string');
+                        }
+                        continue;
+                    } else {
+                        fixed += char;
+                        inString = false;
+                        isValue = false;
+                    }
+                }
+                continue;
+            }
+
+            fixed += char;
+        }
+
+        input = fixed;
+
+        let beforeFix = input;
+
+        input = input.replace(/"(\s+)("(?:[^"\\]|\\.)*?"\s*:)/g, '",$1$2');
+
+        input = input.replace(/(\d|true|false|null)(\s+)("(?:[^"\\]|\\.)*?"\s*:)/g, '$1,$2$3');
+
+        input = input.replace(/([\]}])(\s+)("(?:[^"\\]|\\.)*?"\s*:)/g, '$1,$2$3');
+
+        if (input !== beforeFix) {
+            changes.push('Thêm dấu phẩy thiếu giữa properties');
+        }
 
         const multipleObjectsPattern = /}\s*\n\s*{/g;
         if (multipleObjectsPattern.test(input)) {
             const objects = [];
             let braceCount = 0;
             let currentObject = '';
-            let inString = false;
-            let escapeNext = false;
+            let inStr = false;
+            let escNext = false;
 
             for (let i = 0; i < input.length; i++) {
                 const char = input[i];
 
-                if (char === '"' && !escapeNext) {
-                    inString = !inString;
+                if (char === '"' && !escNext) {
+                    inStr = !inStr;
                 }
 
-                escapeNext = (char === '\\' && !escapeNext);
+                escNext = (char === '\\' && !escNext);
 
-                if (!inString) {
+                if (!inStr) {
                     if (char === '{') {
                         braceCount++;
                     } else if (char === '}') {
@@ -1237,12 +1304,7 @@
             }
         }
 
-        let fixed = input;
-
-        if (fixed.match(/,(\s*[}\]])/g)) {
-            fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
-            changes.push('Xóa dấu phẩy thừa');
-        }
+        fixed = input;
 
         if (fixed.match(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g)) {
             fixed = fixed.replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":');
@@ -1254,14 +1316,28 @@
             changes.push('Chuyển ngoặc đơn → kép');
         }
 
+        let trailingCommaCount = 0;
+        while (fixed.match(/,(\s*[}\]])/g)) {
+            fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
+            trailingCommaCount++;
+        }
+        if (trailingCommaCount > 0) {
+            changes.push(`Xóa ${trailingCommaCount} dấu phẩy thừa`);
+        }
+
         const openBraces = (fixed.match(/{/g) || []).length;
         const closeBraces = (fixed.match(/}/g) || []).length;
         const openBrackets = (fixed.match(/\[/g) || []).length;
-        const closeBrackets = (fixed.match(/\]/g) || []).length;
+        const closeBrackets = (fixed.match(/]/g) || []).length;
 
         if (openBraces > closeBraces) {
-            fixed += '}'.repeat(openBraces - closeBraces);
-            changes.push(`Thêm ${openBraces - closeBraces} dấu '}'`);
+            const missing = openBraces - closeBraces;
+            fixed = fixed.trimEnd();
+            if (fixed.endsWith(',')) {
+                fixed = fixed.slice(0, -1);
+            }
+            fixed += '\n' + '}'.repeat(missing);
+            changes.push(`Thêm ${missing} dấu '}'`);
         } else if (closeBraces > openBraces) {
             const extra = closeBraces - openBraces;
             for (let i = 0; i < extra; i++) {
@@ -1274,8 +1350,9 @@
         }
 
         if (openBrackets > closeBrackets) {
-            fixed += ']'.repeat(openBrackets - closeBrackets);
-            changes.push(`Thêm ${openBrackets - closeBrackets} dấu ']'`);
+            const missing = openBrackets - closeBrackets;
+            fixed += ']'.repeat(missing);
+            changes.push(`Thêm ${missing} dấu ']'`);
         } else if (closeBrackets > openBrackets) {
             const extra = closeBrackets - openBrackets;
             for (let i = 0; i < extra; i++) {
@@ -1289,7 +1366,17 @@
 
         fixed = fixed.replace(/"\s*\n\s*"/g, '",\n"');
         fixed = fixed.replace(/([}\]])\s*\n\s*([{"\[])/g, '$1,\n$2');
-        fixed = fixed.replace(/,+/g, ',');
+
+        let dupCommaCount = 0;
+        while (fixed.match(/,{2,}/g)) {
+            fixed = fixed.replace(/,{2,}/g, ',');
+            dupCommaCount++;
+        }
+        if (dupCommaCount > 0) {
+            changes.push('Xóa dấu phẩy trùng lặp');
+        }
+
+        fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
 
         return {
             fixed: fixed,
